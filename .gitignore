@@ -3,3 +3,8 @@
 out/
 gen/
 local.properties
+.classpath
+.project
+.settings/
+bin/
+project.properties
