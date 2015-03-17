@@ -39,7 +39,13 @@ public class RTCActivity extends Activity implements WebRtcClient.RTCListener {
         mSocketAddress = "http://" + getResources().getString(R.string.host);
         mSocketAddress += (":" + getResources().getString(R.string.port) + "/");
 
-        PeerConnectionFactory.initializeAndroidGlobals(this);
+        /*
+         * public static native boolean initializeAndroidGlobals( Object context, boolean
+         * initializeAudio, boolean initializeVideo, boolean vp8HwAcceleration, Object
+         * renderEGLContext);
+         */
+
+        PeerConnectionFactory.initializeAndroidGlobals(this, true, true, false, null);
 
         // Camera display view
         Point displaySize = new Point();
@@ -101,7 +107,7 @@ public class RTCActivity extends Activity implements WebRtcClient.RTCListener {
         // Camera settings
         client.setCamera("front", "640", "480");
         // no need create room
-        //client.start("android_test", true);
+        // client.start("android_test", true);
     }
 
     @Override

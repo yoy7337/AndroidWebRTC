@@ -7,6 +7,7 @@ import java.util.LinkedList;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.webrtc.AudioSource;
 import org.webrtc.DataChannel;
 import org.webrtc.IceCandidate;
 import org.webrtc.MediaConstraints;
@@ -218,10 +219,6 @@ class WebRtcClient {
         }
 
         @Override
-        public void onError() {
-        }
-
-        @Override
         public void onAddStream(MediaStream mediaStream) {
             Log.d(TAG, "onAddStream " + mediaStream.label());
 
@@ -246,9 +243,15 @@ class WebRtcClient {
             this.id = id;
             this.endPoint = endPoint;
 
-            pc.addStream(lMS, new MediaConstraints());
+            pc.addStream(lMS);
 
             mListener.onStatusChanged("CONNECTING");
+        }
+
+        @Override
+        public void onRenegotiationNeeded() {
+            // TODO Auto-generated method stub
+
         }
     }
 
@@ -284,11 +287,16 @@ class WebRtcClient {
         MediaConstraints videoConstraints = new MediaConstraints();
         videoConstraints.mandatory.add(new MediaConstraints.KeyValuePair("maxHeight", height));
         videoConstraints.mandatory.add(new MediaConstraints.KeyValuePair("maxWidth", width));
+        videoConstraints.mandatory.add(new MediaConstraints.KeyValuePair("OfferToReceiveAudio", "true"));
+        videoConstraints.mandatory.add(new MediaConstraints.KeyValuePair("OfferToReceiveVideo", "false"));
 
         VideoSource videoSource = factory.createVideoSource(getVideoCapturer(cameraFacing), videoConstraints);
         lMS = factory.createLocalMediaStream("ARDAMS");
         lMS.addTrack(factory.createVideoTrack("ARDAMSv0", videoSource));
-        lMS.addTrack(factory.createAudioTrack("ARDAMSa0"));
+
+        MediaConstraints audioConstraints = new MediaConstraints();
+        AudioSource audioSource = factory.createAudioSource(audioConstraints);
+        lMS.addTrack(factory.createAudioTrack("ARDAMSa0", audioSource));
 
         mListener.onLocalStream(lMS);
     }
